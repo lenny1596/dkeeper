@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
 import Note from "./Note";
@@ -8,15 +8,26 @@ import { dkeeper_backend } from "../../../declarations/dkeeper_backend";
 function App() {
   const [notes, setNotes] = useState([]);
 
+  // useEffect hook to run fetchNote method once on intial render
+  useEffect(() => {
+    fetchNote();
+  }, []);
+
+  // method to async fetch data from backend and update state.
+  async function fetchNote() {
+    const fetchedNotes = await dkeeper_backend.readNote();
+    setNotes(fetchedNotes);
+  }
+
   function addNote(newNote) {
-    setNotes(prevNotes => {
-      dkeeper_backend.createNote(newNote.title, newNote.content)
-      return [...prevNotes, newNote];
+    setNotes((prevNotes) => {
+      dkeeper_backend.createNote(newNote.title, newNote.content);
+      return [newNote, ...prevNotes]; // reverse the order of notes added to state & sent to backend.
     });
   }
 
   function deleteNote(id) {
-    setNotes(prevNotes => {
+    setNotes((prevNotes) => {
       return prevNotes.filter((noteItem, index) => {
         return index !== id;
       });
