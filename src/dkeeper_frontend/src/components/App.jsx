@@ -4,6 +4,7 @@ import Footer from "./Footer";
 import Note from "./Note";
 import CreateArea from "./CreateArea";
 import { dkeeper_backend } from "../../../declarations/dkeeper_backend";
+import { v4 as uuidv4 } from "uuid";
 
 function App() {
   const [notes, setNotes] = useState([]);
@@ -19,17 +20,25 @@ function App() {
     setNotes(fetchedNotes);
   }
 
+  /* method to set unique id to new data
+     call backend method and set newNote id, title & content
+     also update the notes state variable by appending the new note
+  */
   function addNote(newNote) {
+    const noteId = uuidv4();
+    newNote.id = noteId;
     setNotes((prevNotes) => {
-      dkeeper_backend.createNote(newNote.title, newNote.content);
-      return [newNote, ...prevNotes]; // reverse the order of notes added to state & sent to backend.
+      dkeeper_backend.createNote(newNote.id, newNote.title, newNote.content);
+      return [newNote, ...prevNotes];
     });
   }
 
+  // method to delete a note from backend as well as notes state variable
   function deleteNote(id) {
+    dkeeper_backend.removeNote(id);
     setNotes((prevNotes) => {
-      return prevNotes.filter((noteItem, index) => {
-        return index !== id;
+      return prevNotes.filter((noteItem) => {
+        return noteItem.id !== id;
       });
     });
   }
@@ -42,7 +51,7 @@ function App() {
         return (
           <Note
             key={index}
-            id={index}
+            id={noteItem.id}
             title={noteItem.title}
             content={noteItem.content}
             onDelete={deleteNote}

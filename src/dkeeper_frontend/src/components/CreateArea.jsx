@@ -1,12 +1,13 @@
 import React, { useState } from "react";
-import AddIcon from '@mui/icons-material/Add';
-import Fab from '@mui/material/Fab';
-import Zoom from '@mui/material/Zoom';
+import AddIcon from "@mui/icons-material/Add";
+import Fab from "@mui/material/Fab";
+import Zoom from "@mui/material/Zoom";
 
 function CreateArea(props) {
   const [isExpanded, setExpanded] = useState(false);
 
   const [note, setNote] = useState({
+    id: "",
     title: "",
     content: "",
   });
@@ -25,6 +26,7 @@ function CreateArea(props) {
   function submitNote(event) {
     props.onAdd(note);
     setNote({
+      id: "",
       title: "",
       content: "",
     });
